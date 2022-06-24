@@ -21,7 +21,7 @@ const authorSchema = new mongoose.Schema({
         unique:true
     },
     password:{
-        type:Number,
+        type:mongoose.Schema.Types.Mixed,
         required:true
     }
 

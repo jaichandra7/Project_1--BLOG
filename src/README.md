@@ -70,12 +70,14 @@ In case of unauthorized access return an appropirate error message.
 
 
 
+if(!data.tags.match(/^[a-zA-Z , ]{2,30}$/))
 
 
 
 
 
 
+return res.status(400).send(staus:true, message: "tags should be in valid format")
 
 
 

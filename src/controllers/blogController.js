@@ -70,7 +70,7 @@ const updateBlog = async function (req, res) {
     let body = data.body
 
     if (Object.keys(data).length == 0) {
-      res.status(400).send({ msg: "cant be empty object" })
+      res.status(400).send({status:false, msg: "input field cannot be empty" })
     }
 
     const checkBlog = await BlogModel.find({ _id: blogId })
@@ -114,7 +114,7 @@ const deleteblog1 = async function (req, res) {
     }
 
     let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
-    res.status(200).send({ status: true, data: updatedblog });
+    res.status(200).send({ status:true, data: updatedblog });
 
     if (!blogId) {
       return res.status(404).send({ msg: "No blogId exists" });
