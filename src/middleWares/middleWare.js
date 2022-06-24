@@ -26,12 +26,12 @@ const Authorization = async function (req, res, next) {
   
     let blogId = req.params._id
     if (blogId) {
-      let authorId = await BlogModel.findOne({ _id: blogId })
+      let findAuthInBlog = await BlogModel.findOne({ _id: blogId })
       // console.log(authorId)
-      let auth = authorId.authorId.toString()
+      let author =findAuthInBlog.authorId.toString()
       console.log(auth)
       // console.log(authorLoggedIn)
-      if (auth != authorLoggedIn) return res.status(403).send({ status: false, msg: 'author logged is not allowed to modify the requested authors data' })
+      if (author != authorLoggedIn) return res.status(403).send({ status: false, msg: 'author logged is not allowed to modify the requested authors data' })
     }
     next()
   }
