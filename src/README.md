@@ -64,3 +64,66 @@ Use a middleware for authentication purpose.
 Authorisation
 Make sure that only the owner of the blogs is able to edit or delete the blog.
 In case of unauthorized access return an appropirate error message.
+
+
+
+optional method to delete by query params
+// router.delete('/blogs/?',MiddleWare.authentication,MiddleWare. Authorization,BlogController.deleteblog3)
+
+
+
+const deleteblog3 = async (req, res) => {
+  try {
+    let data = req.query
+    if (Object.keys(data).length <= 0) return res.status(404).send({ status: false, msg: "please enter filter for deletion" })
+    let query = {
+      isDeleted: false,
+      authorId: req.authorId
+    }
+    if (data.tags) {
+      data.tags = { $in: data.tags.split(',') }
+      console.log(data.tags)
+    }
+    if (data.subcategory) {
+      data.subcategory = { $in: data.subcategory.split(',') }
+    }
+    query['$or'] = [
+      { title: data.title },
+      { isPublished: data.isPublished },
+      { authorId: data.authorId },
+      { category: data.category },
+      { subCategory: data.subcategory },
+      { tags: data.tags }
+    ]
+    let del = await BlogModel.find(query)
+    if (del.length == 0) {
+      return res.status(404).send({ status: false, msg: "No such blog present" })
+    }
+    const result = await BlogModel.updateMany(
+      query, { $set: { isDeleted: true, DeletedAt: new Date().toLocaleString() } })
+    res.status(200).send({ status: true, msg: "blogs deleted" })
+  }
+  catch (err) {
+    res.status(500).send({ status: false, data: err.message })
+  }
+  <!-- if( query.authorId !=authIdtoken){
+    return res.status(403).send({status:false,msg:"you are unauthorised to change other data"})
+  } -->
+}
+
+module.exports.deleteblog3 = deleteblog3
+
+
+
+<!-- update blog by 2 db query  but its individual find not continution of first find-->
+    // let authorId=req.query.authorId
+    // let category=req.query.category
+    // let tags=req.query.tags
+    // let subCategory=req.query.subCategory
+    // filterdata.authorId=authorId
+    //     filterdata.category=category
+    //     filterdata.tags=tags
+    //     filterdata.subCategory=subCategory
+    //     console.log(filterdata)
+    // const getblog = await BlogModel.find(filterdata)
+    // const filterblog = await BlogModel.find({$and:[{filterdata},{$or:[{authorId:authorId},{category:category},{tags:tags},{subCategory:subCategory}]}]})

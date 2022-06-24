@@ -22,6 +22,7 @@ const Authorization = async function (req, res, next) {
     let decodedToken = jwt.verify(token, "Project-1");
     let authorLoggedIn = decodedToken.loginUser
     req.authorId = authorLoggedIn
+    console.log(req.authorId)
   
     let blogId = req.params._id
     if (blogId) {
@@ -29,7 +30,7 @@ const Authorization = async function (req, res, next) {
       // console.log(authorId)
       let auth = authorId.authorId.toString()
       console.log(auth)
-      console.log(authorLoggedIn)
+      // console.log(authorLoggedIn)
       if (auth != authorLoggedIn) return res.status(403).send({ status: false, msg: 'author logged is not allowed to modify the requested authors data' })
     }
     next()
