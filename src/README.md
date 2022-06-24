@@ -67,6 +67,23 @@ In case of unauthorized access return an appropirate error message.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 optional method to delete by query params
 // router.delete('/blogs/?',MiddleWare.authentication,MiddleWare. Authorization,BlogController.deleteblog3)
 

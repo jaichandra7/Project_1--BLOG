@@ -1,5 +1,8 @@
 const AuthorModel = require('../models/authorModel')
 const jwt = require('jsonwebtoken')
+
+//----------------------------------------------------------CREATE AUTHOR-----------------------------------------------------------------//
+
 const createAuthor = async function(req,res){
     try{
         let data = req.body
@@ -23,6 +26,8 @@ catch (err) {
     res.status(500).send({ msg: "Error", error: err.message })
 }
 }
+
+// -------------------------------------------------------------LOGIN AUTHOR----------------------------------------------------------------//
 
 const login = async function(req,res){
     try{
@@ -55,5 +60,7 @@ catch (err) {
 
   }
 
+
+  
 module.exports.createAuthor = createAuthor
 module.exports.login = login

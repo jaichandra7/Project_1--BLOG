@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 const BlogModel = require('../models/blogModel')
 
+
+// ---------------------------------------------CREATE BLOG API ---------------------------------------------------------------------------//
+
+
 const createBlog = async function (req, res) {
   try {
     let data = req.body
@@ -27,6 +31,9 @@ const createBlog = async function (req, res) {
   }
 }
 
+// ---------------------------------------------------GET BLOG API---------------------------------------------------------------------------//
+
+
 const getblogs = async function (req, res) {
   try {
     let query = req.query
@@ -46,9 +53,16 @@ const getblogs = async function (req, res) {
 
 }
 
+// ---------------------------------------------------UPDATE BLOG BY PATH PARAMS-------------------------------------------------------------//
+
+
 const updateBlog = async function (req, res) {
   try {
+   
     let blogId = req.params._id
+    if(!mongoose.isValidObjectId(blogId)){
+      return res.status(400).send({status:false,msg:'invalid blogId '})
+    }
     let data = req.body
     let tags = data.tags
     let subCategory = data.subCategory
@@ -70,13 +84,14 @@ const updateBlog = async function (req, res) {
       const updatedBlog = await BlogModel.findOneAndUpdate({ _id: blogId }, { title: title, body: body, isPublished: true, publishedAt: new Date(Date.now()) }, { new: true },)
       updatedBlog.save()
 
-      if (data.subCategory) {
+      if (data.subCategory){
         updatedBlog.subCategory.push(subCategory)
       }
-      else {
+      if (data.tags){
         updatedBlog.tags.push(tags)
       }
       res.status(200).send({ msg: true, data: updatedBlog })
+    
     }
   }
   catch (err) {
@@ -88,14 +103,22 @@ const updateBlog = async function (req, res) {
 
 
 
+// -----------------------------------------------DELETE BLOG BY PATH PARAMS----------------------------------------------------------------//
+
+
 const deleteblog1 = async function (req, res) {
   try {
     let blogId = req.params._id
+    if(!mongoose.isValidObjectId(blogId)){
+      return res.status(400).send({status:false,msg:'invalid blogId '})
+    }
+
+    let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
+    res.status(200).send({ status: true, data: updatedblog });
+
     if (!blogId) {
       return res.status(404).send({ msg: "No blogId exists" });
     }
-    let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
-    res.status(200).send({ status: true, data: updatedblog });
   }
   catch (err) {
     console.log("This is the error :", err.message)
@@ -105,14 +128,16 @@ const deleteblog1 = async function (req, res) {
 
 
 
+// ---------------------------------------------DELETE BLOG BY QUERY PARAMS-----------------------------------------------------------------//
+
+
 const deleteblog2 = async function (req, res) {
   try {
     let authIdtoken = req.authorId
-
     let query = req.query
     let getdata =await BlogModel.find(query,{isDeleted:false})
     if(getdata.length==0){
-      return res.status(404).send({status:false,msg:"no blog such blog"})
+      return res.status(404).send({status:false,msg:"no such blog exist"})
     }
 
     if(getdata.isDeleted==true){
@@ -128,6 +153,9 @@ const deleteblog2 = async function (req, res) {
     res.status(500).send({ msg: "Error", error: err.message })
   }
 }
+
+
+
 
 
 module.exports.createBlog = createBlog
