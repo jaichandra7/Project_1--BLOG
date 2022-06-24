@@ -20,10 +20,9 @@ const blogSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    subCategory:{
-        type:Array
-
-    },
+    subCategory:[{
+        type:String
+    }],
     deletedAt:{
         type:String,
         default:null

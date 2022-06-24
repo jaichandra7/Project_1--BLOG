@@ -72,6 +72,18 @@ const updateBlog = async function (req, res) {
     if (Object.keys(data).length == 0) {
       res.status(400).send({status:false, msg: "input field cannot be empty" })
     }
+    // if(!tags.match(/^[a-zA-Z , ]{2,10}$/)){
+    //   return res.status(400).send({status:false, msg: "tags should be in valid format"})
+    // }
+    // if(!subCategory.match(/^[a-zA-Z , ]{2,15}$/)){
+    //   return res.status(400).send({status:false, msg: "subCategory should be in valid format"})
+    // }
+    // if(!title.match(/^[a-zA-Z , ]{2,10}$/)){
+    //   return res.status(400).send({status:false, msg: "title should be in valid format"})
+    // }
+    // if(!body.match(/^[a-zA-Z , ]{2,10}$/)){
+    //   return res.status(400).send({status:false, msg: "body should be in valid format"})
+    // }
 
     const checkBlog = await BlogModel.find({ _id: blogId })
     console.log(checkBlog)
@@ -81,7 +93,7 @@ const updateBlog = async function (req, res) {
       return res.status(400).send({ status: false, msg: "we cannot modify the deleted blog" })
     }
     else {
-      const updatedBlog = await BlogModel.findOneAndUpdate({ _id: blogId }, { title: title, body: body, isPublished: true, publishedAt: new Date(Date.now()) }, { new: true },)
+      const updatedBlog = await BlogModel.findOneAndUpdate({ _id: blogId }, { title: title, body: body, isPublished: true, publishedAt: new Date()},{ new: true },)
       updatedBlog.save()
 
       if (data.subCategory){
