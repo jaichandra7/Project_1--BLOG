@@ -10,57 +10,57 @@ const createBlog = async function (req, res) {
     let data = req.body
 
     if (Object.keys(data).length == 0) {
-      res.status(400).send({ msg: "cant be empty object" })
+      res.status(400).send({ msg: "cant be empty object" })  //request body should not be empty validation.
     }
     let title=data.title
     if(!title){
-    return res.status(400).send({status:false,msg:"title must be present"})
+    return res.status(400).send({status:false,msg:"title must be present"}) // title key should be present in data.
    }
     if(typeof title!="string"){
-    return res.status(400).send({status:false,msg:"title must be in string only"})
+    return res.status(400).send({status:false,msg:"title must be in string only"}) //title should be in string only.
    }
    let titles = title.trim()
    if (titles.length ==0){
-    return res.status(400).send({status:false,msg:" title must have atleast one character"})
+    return res.status(400).send({status:false,msg:" title must have atleast one character"})  //title value should have one character atleast and extra spaces around value is trimmed.
     }
     let body=data.body
     if(!body){
-    return res.status(400).send({status:false,msg:"body must be present"})
+    return res.status(400).send({status:false,msg:"body must be present"}) // body key should be present in data.
    }
     if(typeof body!="string"){
-    return res.status(400).send({status:false,msg:"body must be in string only"})
+    return res.status(400).send({status:false,msg:"body must be in string only"}) //body should be in string only.
    }
    let bodys= body.trim()
    if (bodys.length ==0){
-    return res.status(400).send({status:false,msg:"body must have atleast one character"})
+    return res.status(400).send({status:false,msg:"body must have atleast one character"}) //body value should have one character atleast and extra spaces around value is trimmed.
     }
 
     const auth = data.authorId
     if (!auth) {
-      res.status(400).send({ status: false, msg: "authorid is required" })
+      res.status(400).send({ status: false, msg: "authorid is required" }) //authorid key validation in data.
     }
 
     if (!mongoose.isValidObjectId(auth)) {
-      return res.status(400).send({ status: false, msg: "invalid authorId" })
+      return res.status(400).send({ status: false, msg: "invalid authorId" }) //authorid length validation according to mongoose.
     }
     
     let category=data.category
     if(!category){
-    return res.status(400).send({status:false,msg:"category must be present"})
+    return res.status(400).send({status:false,msg:"category must be present"}) // category key should be present in data.
    }
     if(typeof category!="string"){
-    return res.status(400).send({status:false,msg:"category must be in string only"})
+    return res.status(400).send({status:false,msg:"category must be in string only"}) //category should be in string only.
    }
    let categories = category.trim()
    if (categories.length ==0){
-    return res.status(400).send({status:false,msg:"category must have atleast one character"})
+    return res.status(400).send({status:false,msg:"category must have atleast one character"}) //category value should have one character atleast and extra spaces around value is trimmed.
     }
    let tags =data.tags
    if(!tags){
-    return res.status(400).send({status:false,msg:"tags must be present"})
+    return res.status(400).send({status:false,msg:"tags must be present"}) // tags key should be present in data.
    }
    if(typeof tags!="object"){
-    return res.status(400).send({status:false,msg:"tags must be string in object only"})
+    return res.status(400).send({status:false,msg:"tags must be string in object only"}) //tags key should be in object only.
    }
    let Tags=data.tags
    const results = Tags.map(ele => {
@@ -69,18 +69,18 @@ const createBlog = async function (req, res) {
   //  console.log(results)
    for (let i=0;i<Tags.length;i++){
    if (Tags[i]!=results[i])
-     return res.status(400).send({status:false,msg:"tags having extra spaces! Provide proper tags"})
+     return res.status(400).send({status:false,msg:"tags having extra spaces! Provide proper tags"}) // validation if extra spaces around tags is given by frontend.
   }
    if (tags.length ==0){
-    return res.status(400).send({status:false,msg:"tags must have atleast one character"})
+    return res.status(400).send({status:false,msg:"tags must have atleast one character"}) // tags cannot be empty 
     }
 
   let subCategory =data.subCategory
   if(!subCategory){
-   return res.status(400).send({status:false,msg:"subCategory must be present"})
+   return res.status(400).send({status:false,msg:"subCategory must be present"}) // subCategory key should be present in data.
   }
   if(typeof subCategory!="object"){
-    return res.status(400).send({status:false,msg:"subCategory must be string in object only"})
+    return res.status(400).send({status:false,msg:"subCategory must be string in object only"}) //subCategory key should be in object only.
    }
    let SubCategory=data.subCategory
    const result = SubCategory.map(ele => {
@@ -89,7 +89,7 @@ const createBlog = async function (req, res) {
   //  console.log(result)
    for (let i=0;i<SubCategory.length;i++){
    if (SubCategory[i]!=result[i])
-     return res.status(400).send({status:false,msg:"subCategory having extra spaces! Provide proper subCategory"})
+     return res.status(400).send({status:false,msg:"subCategory having extra spaces! Provide proper subCategory"})// validation if extra spaces around subCategory is given by frontend.
   }
 
     const createData = await BlogModel.create(data)
@@ -111,7 +111,7 @@ const getblogs = async function (req, res) {
     const getblog = await BlogModel.find({ $and: [{ isPublished: true, isDeleted: false }, query] })
 
     if (getblog.length === 0) {
-      return res.status(404).send({ status: false, msg: "no author found" })
+      return res.status(404).send({ status: false, msg: "no author found" }) // if we are getting empty array 
     }
     res.status(200).send({ status: true, data: getblog })
 
@@ -131,20 +131,20 @@ const updateBlog = async function (req, res) {
    
     let blogId = req.params._id
     if(!mongoose.isValidObjectId(blogId)){
-      return res.status(400).send({status:false,msg:'invalid blogId '})
+      return res.status(400).send({status:false,msg:'invalid blogId '})  //blogId length validation according to mongoose.
     }
     let data = req.body
     let tags = data.tags
     let subCategory = data.subCategory
     let title = data.title
     let body = data.body
-    var regex=  new RegExp(/^[a-zA-Z ]{2,10}$/);
+    var regex=  new RegExp(/^[a-zA-Z ]{2,10}$/);   // naming validation according to characters and length by regex
 
     if (Object.keys(data).length == 0) {
-      res.status(400).send({status:false, msg: "input field cannot be empty" })
+      res.status(400).send({status:false, msg: "input field cannot be empty" }) // data cannot be empty in body
     }
     if((data.tags && !tags.match(regex))){
-      return res.status(400).send({status:false, msg: "tags should be in valid format"})
+      return res.status(400).send({status:false, msg: "tags should be in valid format"}) 
     }
     if(data.subCategory && !subCategory.match(regex)){
       return res.status(400).send({status:false, msg: "subCategory should be in valid format"})
@@ -158,10 +158,10 @@ const updateBlog = async function (req, res) {
 
     const checkBlog = await BlogModel.find({ _id: blogId })
     // console.log(checkBlog)
-    if (checkBlog.length == 0) return res.status(404).send({ status: false, msg: "Blog Not Found" })
+    if (checkBlog.length == 0) return res.status(404).send({ status: false, msg: "Blog Not Found" }) // if we get empty array
 
     if (checkBlog[0].isDeleted == true) {
-      return res.status(400).send({ status: false, msg: "we cannot modify the deleted blog" })
+      return res.status(400).send({ status: false, msg: "we cannot modify the deleted blog" }) // validation for deleted blog, modification is not allowed.
     }
     else {
       const updatedBlog = await BlogModel.findOneAndUpdate({ _id: blogId }, { title: title, body: body, isPublished: true, publishedAt: new Date()},{ new: true },)
@@ -171,7 +171,7 @@ const updateBlog = async function (req, res) {
       if (data.tags){
         updatedBlog.tags.push(tags)
       }
-      updatedBlog.save()
+      updatedBlog.save()          // update in db after pushing the tags and subCategory, because we are using push out of db query.
       res.status(200).send({ msg: true, data: updatedBlog })
     
     }
@@ -192,15 +192,12 @@ const deleteblog1 = async function (req, res) {
   try {
     let blogId = req.params._id
     if(!mongoose.isValidObjectId(blogId)){
-      return res.status(400).send({status:false,msg:'invalid blogId '})
+      return res.status(400).send({status:false,msg:'invalid blogId '}) //blogId length validation according to mongoose.
     }
 
     let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
     res.status(200).send({ status:true, data: updatedblog });
 
-    if (!blogId) {
-      return res.status(404).send({ msg: "No blogId exists" });
-    }
   }
   catch (err) {
     console.log("This is the error :", err.message)
@@ -217,18 +214,18 @@ const deleteblog2 = async function (req, res) {
   try {
     let authIdtoken = req.authorId
     let query = req.query
-    let getdata =await BlogModel.find(query,{isDeleted:false})
+    let getdata =await BlogModel.find(query,{isDeleted:false}) //first filter conditions according to query and flag
     if(getdata.length==0){
-      return res.status(404).send({status:false,msg:"no such blog exist"})
+      return res.status(404).send({status:false,msg:"no such blog exist"}) // if no such conditions much validation for empty array
     }
 
     if(getdata.isDeleted==true){
-      return res.status(400).send({status:false,msg:"we cannot update deleted blog"})
+      return res.status(400).send({status:false,msg:"we cannot update deleted blog"}) // if conditions mach and blog deleted,validation.
     }
 
     let updatedBlog = await BlogModel.updateMany({$and:[{authorId:authIdtoken},query]},{$set:{isDeleted:true,deletedAt:new Date()}},{new:true})
 
-    res.status(200).send({ status: true, data: updatedBlog });
+    res.status(200).send({ status: true, data: updatedBlog,msg:"blog deleted"});
   }
   catch (err) {
     console.log("This is the error :", err.message)
