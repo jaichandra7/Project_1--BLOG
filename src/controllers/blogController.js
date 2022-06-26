@@ -83,7 +83,7 @@ const createBlog = async function (req, res) {
     return res.status(400).send({status:false,msg:"subCategory must be string in object only"})
    }
    let SubCategory=data.subCategory
-   const result = Tags.map(ele => {
+   const result = SubCategory.map(ele => {
     return ele.trim();
    })
   //  console.log(result)
