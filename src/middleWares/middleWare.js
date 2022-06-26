@@ -29,7 +29,7 @@ const Authorization = async function (req, res, next) {
     let decodedToken = jwt.verify(token, "Project-1");
     let authorLoggedIn = decodedToken.loginUser   // accessing authorid from payload of token 
     req.authorId = authorLoggedIn   //taking  re.authorid variable to use further in controller for updating flag
-    console.log(req.authorId)
+    console.log(req.authorId +  " loggedIn author ")
     let blogId = req.params._id   //blogid from path params 
 
     if (blogId) {                 // if condition is only valid for updating and deleting via path params
@@ -38,7 +38,7 @@ const Authorization = async function (req, res, next) {
       }
       let findAuthInBlog = await BlogModel.findOne({ _id: blogId })
       let author =findAuthInBlog.authorId.toString()
-      console.log(author)
+      console.log(author + " updating author ")
       // console.log(authorLoggedIn)
       if (author != authorLoggedIn) return res.status(403).send({ status: false, msg: 'author logged is not allowed to modify the requested authors data' })
     }

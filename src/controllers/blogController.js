@@ -41,11 +41,11 @@ const createBlog = async function (req, res) {
     }
     let author = await AuthorModel.findById(auth)
     if(!author){
-      return res.status(400).send({status:false,msg:"Invalid author"}) //author validation by searching in db or wrong author Id
+      return res.status(400).send({status:false,msg:"Invalid author"}) //author validation by searching in db or wrong author Id.
     }
     let authIdtoken=req.authorId
     if(auth!=authIdtoken){
-      return res.status(403).send({status:false,msg:"author loggedin is not allowed to create other authors data"}) //Authorization of author
+      return res.status(403).send({status:false,msg:"author loggedIn is not allowed to create other authors blog."}) //Authorization of author
     }
     if (!mongoose.isValidObjectId(auth)) {
       return res.status(400).send({ status: false, msg: "invalid authorId" }) //authorid length validation according to mongoose.
