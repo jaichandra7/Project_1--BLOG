@@ -33,6 +33,9 @@ const Authorization = async function (req, res, next) {
     let blogId = req.params._id   //blogid from path params 
 
     if (blogId) {                 // if condition is only valid for updating and deleting via path params
+      if(!mongoose.isValidObjectId(blogId)){
+        return res.status(400).send({status:false,msg:'invalid blogId '})  //blogId length validation according to mongoose.
+      }
       let findAuthInBlog = await BlogModel.findOne({ _id: blogId })
       let author =findAuthInBlog.authorId.toString()
       console.log(author)

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const BlogModel = require('../models/blogModel')
+const AuthorModel=require('../models/authorModel')
 
 
 // ---------------------------------------------CREATE BLOG API ---------------------------------------------------------------------------//
@@ -8,7 +9,6 @@ const BlogModel = require('../models/blogModel')
 const createBlog = async function (req, res) {
   try {
     let data = req.body
-
     if (Object.keys(data).length == 0) {
       res.status(400).send({ msg: "cant be empty object" })  //request body should not be empty validation.
     }
@@ -39,7 +39,14 @@ const createBlog = async function (req, res) {
     if (!auth) {
       res.status(400).send({ status: false, msg: "authorid is required" }) //authorid key validation in data.
     }
-
+    let author = await AuthorModel.findById(auth)
+    if(!author){
+      return res.status(400).send({status:false,msg:"Invalid author"}) //author validation by searching in db or wrong author Id
+    }
+    let authIdtoken=req.authorId
+    if(auth!=authIdtoken){
+      return res.status(403).send({status:false,msg:"author loggedin is not allowed to create other authors data"}) //Authorization of author
+    }
     if (!mongoose.isValidObjectId(auth)) {
       return res.status(400).send({ status: false, msg: "invalid authorId" }) //authorid length validation according to mongoose.
     }
@@ -128,21 +135,18 @@ const getblogs = async function (req, res) {
 
 const updateBlog = async function (req, res) {
   try {
-   
-    let blogId = req.params._id
-    if(!mongoose.isValidObjectId(blogId)){
-      return res.status(400).send({status:false,msg:'invalid blogId '})  //blogId length validation according to mongoose.
-    }
     let data = req.body
+    if (Object.keys(data).length == 0) {
+      res.status(400).send({status:false, msg: "input field cannot be empty" }) // data cannot be empty in body
+    }
+    let blogId = req.params._id
     let tags = data.tags
     let subCategory = data.subCategory
     let title = data.title
     let body = data.body
     var regex=  new RegExp(/^[a-zA-Z ]{2,10}$/);   // naming validation according to characters and length by regex
 
-    if (Object.keys(data).length == 0) {
-      res.status(400).send({status:false, msg: "input field cannot be empty" }) // data cannot be empty in body
-    }
+
     if((data.tags && !tags.match(regex))){
       return res.status(400).send({status:false, msg: "tags should be in valid format"}) 
     }
@@ -191,10 +195,6 @@ const updateBlog = async function (req, res) {
 const deleteblog1 = async function (req, res) {
   try {
     let blogId = req.params._id
-    if(!mongoose.isValidObjectId(blogId)){
-      return res.status(400).send({status:false,msg:'invalid blogId '}) //blogId length validation according to mongoose.
-    }
-
     let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
     res.status(200).send({ status:true, data: updatedblog });
 
@@ -218,7 +218,6 @@ const deleteblog2 = async function (req, res) {
     if(getdata.length==0){
       return res.status(404).send({status:false,msg:"no such blog exist"}) // if no such conditions much validation for empty array
     }
-
     if(getdata.isDeleted==true){
       return res.status(400).send({status:false,msg:"we cannot update deleted blog"}) // if conditions mach and blog deleted,validation.
     }
