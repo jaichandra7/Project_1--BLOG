@@ -95,7 +95,7 @@ const login = async function(req,res){
     var loginUser = await AuthorModel.findOne({email:email,password:password})
     console.log(loginUser)
     if(!loginUser){
-        res.status(400).send({status:false,msg:"login Credentials are wrong"}) //login email and password does not match validation.
+        res.status(401).send({status:false,msg:"login Credentials are wrong"}) //login email and password does not match validation.
     }
 }
 catch (err) {
