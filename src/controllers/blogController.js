@@ -161,7 +161,6 @@ const updateBlog = async function (req, res) {
     }
 
     const checkBlog = await BlogModel.find({ _id: blogId })
-    // console.log(checkBlog)
     if (checkBlog.length == 0) return res.status(404).send({ status: false, msg: "Blog Not Found" }) // if we get empty array
 
     if (checkBlog[0].isDeleted == true) {
