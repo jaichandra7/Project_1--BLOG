@@ -194,9 +194,13 @@ const updateBlog = async function (req, res) {
 const deleteblog1 = async function (req, res) {
   try {
     let blogId = req.params._id
+    let findblog= await BlogModel.findById({ _id: blogId })
+    if(findblog.isDeleted==true){
+      return res.status(400).send()
+    }
     let updatedblog = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: new Date() }, { new: true });
     res.status(200).send({ status:true, data: updatedblog });
-
+  console.log(updatedblog)
   }
   catch (err) {
     console.log("This is the error :", err.message)
@@ -213,10 +217,11 @@ const deleteblog2 = async function (req, res) {
   try {
     let authIdtoken = req.authorId
     let query = req.query
-    let getdata =await BlogModel.find(query,{isDeleted:false}) //first filter conditions according to query and flag
+    let getdata =await BlogModel.findOne(query) //first filter conditions according to query and flag
     if(getdata.length==0){
       return res.status(404).send({status:false,msg:"no such blog exist"}) // if no such conditions much validation for empty array
     }
+    console.log(getdata)
     if(getdata.isDeleted==true){
       return res.status(400).send({status:false,msg:"we cannot update deleted blog"}) // if conditions mach and blog deleted,validation.
     }
