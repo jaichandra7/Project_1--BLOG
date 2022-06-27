@@ -111,7 +111,7 @@ catch (err) {
         },"Project-1"
         )
         res.setHeader("x-api-key",token)
-        res.status(201).send({status:true,msg:token}) //creating jwt after successful login by author
+        res.status(201).send({status:true,data:token}) //creating jwt after successful login by author
 
   }
 
