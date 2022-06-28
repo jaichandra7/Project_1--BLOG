@@ -217,8 +217,8 @@ const deleteblog2 = async function (req, res) {
   try {
     let authIdtoken = req.authorId
     let query = req.query
-    let getdata =await BlogModel.findOne(query) //first filter conditions according to query and flag
-    if(getdata.length==0){
+    let getdata =await BlogModel.findOne(query) //first filter conditions according to query.
+    if(!getdata){
       return res.status(404).send({status:false,msg:"no such blog exist"}) // if no such conditions much validation for empty array
     }
     console.log(getdata)
